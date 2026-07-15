@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="GK Properties — Property Management Dashboard for Mr. Govindraj. Track properties, tenants, and issues.">
+  <title>GK Properties — Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ───── Ambient Glow Background ───── -->
+  <div class="ambient-bg">
+    <div class="glow glow-1"></div>
+    <div class="glow glow-2"></div>
+    <div class="glow glow-3"></div>
+  </div>
+
+  <!-- ───── Header / Navbar ───── -->
+  <header id="app-header">
+    <div class="header-inner">
+      <div class="logo-group">
+        <div class="logo-icon">
+          <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="4" y="18" width="14" height="18" rx="2" stroke="currentColor" stroke-width="2"/>
+            <rect x="22" y="8" width="14" height="28" rx="2" stroke="currentColor" stroke-width="2"/>
+            <rect x="8" y="22" width="3" height="3" rx="0.5" fill="currentColor"/>
+            <rect x="13" y="22" width="3" height="3" rx="0.5" fill="currentColor"/>
+            <rect x="8" y="28" width="3" height="3" rx="0.5" fill="currentColor"/>
+            <rect x="13" y="28" width="3" height="3" rx="0.5" fill="currentColor"/>
+            <rect x="26" y="12" width="3" height="3" rx="0.5" fill="currentColor"/>
+            <rect x="31" y="12" width="3" height="3" rx="0.5" fill="currentColor"/>
+            <rect x="26" y="18" width="3" height="3" rx="0.5" fill="currentColor"/>
+            <rect x="31" y="18" width="3" height="3" rx="0.5" fill="currentColor"/>
+            <rect x="26" y="24" width="3" height="3" rx="0.5" fill="currentColor"/>
+            <rect x="31" y="24" width="3" height="3" rx="0.5" fill="currentColor"/>
+            <rect x="26" y="30" width="3" height="3" rx="0.5" fill="currentColor"/>
+            <rect x="31" y="30" width="3" height="3" rx="0.5" fill="currentColor"/>
+          </svg>
+        </div>
+        <div class="logo-text">
+          <h1>GK Properties</h1>
+          <span class="subtitle">Mr. Govindraj • Property Manager</span>
+        </div>
+      </div>
+      <div class="header-stats" id="header-stats">
+        <div class="stat-chip">
+          <span class="stat-label">Properties</span>
+          <span class="stat-value" id="stat-total">0</span>
+        </div>
+        <div class="stat-chip stat-chip--issues">
+          <span class="stat-label">Issues</span>
+          <span class="stat-value" id="stat-issues">0</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ───── Main Content ───── -->
+  <main id="app-main">
+
+    <!-- ── View: Property List ── -->
+    <section id="view-list" class="view active">
+      <div class="section-bar">
+        <h2 class="section-title">Property Records</h2>
+        <button id="btn-add-new" class="btn btn--primary" onclick="showView('add')">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Add Property
+        </button>
+      </div>
+
+      <!-- Search & Filter -->
+      <div class="search-bar-wrap">
+        <div class="search-bar">
+          <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" id="search-input" placeholder="Search by name, location, client…" autocomplete="off">
+        </div>
+      </div>
+
+      <!-- Empty State -->
+      <div id="empty-state" class="empty-state">
+        <div class="empty-icon">
+          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+            <polyline points="9 22 9 12 15 12 15 22"/>
+          </svg>
+        </div>
+        <h3>No Properties Yet</h3>
+        <p>Add your first property to get started.</p>
+        <button class="btn btn--primary" onclick="showView('add')">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Add Property
+        </button>
+      </div>
+
+      <!-- Property Cards Grid -->
+      <div id="property-grid" class="property-grid"></div>
+    </section>
+
+    <!-- ── View: Add / Edit Property ── -->
+    <section id="view-add" class="view">
+      <div class="section-bar">
+        <button class="btn btn--ghost" onclick="cancelForm()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+          Back
+        </button>
+        <h2 class="section-title" id="form-title">Add New Property</h2>
+        <div style="width:100px"></div>
+      </div>
+
+      <form id="property-form" class="property-form" onsubmit="handleSubmit(event)">
+        <!-- Property Details -->
+        <fieldset class="form-group">
+          <legend>Property Details</legend>
+          <div class="field">
+            <label for="prop-name">Property Name <span class="req">*</span></label>
+            <input type="text" id="prop-name" name="name" required placeholder="e.g. Sunrise Apartments">
+          </div>
+          <div class="field">
+            <label for="prop-location">Location <span class="req">*</span></label>
+            <input type="text" id="prop-location" name="location" required placeholder="e.g. 12 MG Road, Bengaluru">
+          </div>
+        </fieldset>
+
+        <!-- Client / Tenant Info -->
+        <fieldset class="form-group">
+          <legend>Client / Tenant Info <span class="optional-tag">Optional</span></legend>
+          <div class="field-row">
+            <div class="field">
+              <label for="client-name">Client Name</label>
+              <input type="text" id="client-name" name="clientName" placeholder="e.g. Rahul Sharma">
+            </div>
+            <div class="field">
+              <label for="client-phone">Phone Number</label>
+              <input type="tel" id="client-phone" name="clientPhone" placeholder="e.g. +91 98765 43210">
+            </div>
+          </div>
+        </fieldset>
+
+        <!-- Issue -->
+        <fieldset class="form-group">
+          <legend>Issue Details <span class="optional-tag">Optional</span></legend>
+          <div class="field">
+            <label for="prop-issue">Describe the Issue</label>
+            <textarea id="prop-issue" name="issue" rows="4" placeholder="e.g. Water leakage in 3rd floor bathroom…"></textarea>
+          </div>
+        </fieldset>
+
+        <div class="form-actions">
+          <button type="button" class="btn btn--ghost" onclick="cancelForm()">Cancel</button>
+          <button type="submit" class="btn btn--primary" id="btn-submit">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+            <span id="btn-submit-text">Save Property</span>
+          </button>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <!-- ───── Toast Container ───── -->
+  <div id="toast-container"></div>
+
+  <!-- ───── Delete Confirmation Modal ───── -->
+  <div id="modal-overlay" class="modal-overlay" onclick="closeModal()">
+    <div class="modal-box" onclick="event.stopPropagation()">
+      <h3>Delete Property?</h3>
+      <p>This action cannot be undone. The property record will be permanently removed.</p>
+      <div class="modal-actions">
+        <button class="btn btn--ghost" onclick="closeModal()">Cancel</button>
+        <button class="btn btn--danger" id="btn-confirm-delete" onclick="confirmDelete()">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ───── Floating Calculator ───── -->
+  <button id="calc-fab" class="calc-fab" onclick="toggleCalculator()" title="Calculator">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="4" y="2" width="16" height="20" rx="2"/>
+      <line x1="8" y1="6" x2="16" y2="6"/>
+      <line x1="8" y1="10" x2="8" y2="10.01"/>
+      <line x1="12" y1="10" x2="12" y2="10.01"/>
+      <line x1="16" y1="10" x2="16" y2="10.01"/>
+      <line x1="8" y1="14" x2="8" y2="14.01"/>
+      <line x1="12" y1="14" x2="12" y2="14.01"/>
+      <line x1="16" y1="14" x2="16" y2="14.01"/>
+      <line x1="8" y1="18" x2="8" y2="18.01"/>
+      <line x1="12" y1="18" x2="16" y2="18"/>
+    </svg>
+  </button>
+
+  <div id="calc-panel" class="calc-panel">
+    <div class="calc-header">
+      <span class="calc-title">Calculator</span>
+      <button class="btn btn--icon" onclick="toggleCalculator()" title="Close">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="calc-display">
+      <div class="calc-expression" id="calc-expression"></div>
+      <div class="calc-result" id="calc-result">0</div>
+    </div>
+    <div class="calc-grid">
+      <button class="calc-btn calc-btn--fn" onclick="calcClear()">C</button>
+      <button class="calc-btn calc-btn--fn" onclick="calcBackspace()">⌫</button>
+      <button class="calc-btn calc-btn--op" onclick="calcOperator('%')">%</button>
+      <button class="calc-btn calc-btn--op" onclick="calcOperator('/')">÷</button>
+
+      <button class="calc-btn" onclick="calcDigit('7')">7</button>
+      <button class="calc-btn" onclick="calcDigit('8')">8</button>
+      <button class="calc-btn" onclick="calcDigit('9')">9</button>
+      <button class="calc-btn calc-btn--op" onclick="calcOperator('*')">×</button>
+
+      <button class="calc-btn" onclick="calcDigit('4')">4</button>
+      <button class="calc-btn" onclick="calcDigit('5')">5</button>
+      <button class="calc-btn" onclick="calcDigit('6')">6</button>
+      <button class="calc-btn calc-btn--op" onclick="calcOperator('-')">−</button>
+
+      <button class="calc-btn" onclick="calcDigit('1')">1</button>
+      <button class="calc-btn" onclick="calcDigit('2')">2</button>
+      <button class="calc-btn" onclick="calcDigit('3')">3</button>
+      <button class="calc-btn calc-btn--op" onclick="calcOperator('+')">+</button>
+
+      <button class="calc-btn calc-btn--zero" onclick="calcDigit('0')">0</button>
+      <button class="calc-btn" onclick="calcDecimal()">.</button>
+      <button class="calc-btn calc-btn--eq" onclick="calcEquals()">=</button>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

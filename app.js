@@ -1169,6 +1169,12 @@ function initScrollTopBtn() {
   });
 }
 
+document.addEventListener("keydown", function (event) {
+    if (event.key.toLowerCase() === "t") {
+        document.getElementById("scroll-top-btn").click();
+    }
+});
+
 // ═══════════════════════════════════════════
 // 🌟 LOGO ANIMATION
 // ═══════════════════════════════════════════

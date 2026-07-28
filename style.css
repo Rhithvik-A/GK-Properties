@@ -701,6 +701,39 @@ kbd {
   opacity: 0.5;
 }
 
+/* ── Filter Tabs ── */
+.filter-tabs {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+
+.filter-tab {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s var(--ease-out);
+}
+
+.filter-tab:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-primary);
+}
+
+.filter-tab.active {
+  background: rgba(0, 229, 255, 0.12);
+  border-color: var(--border-neon);
+  color: var(--neon);
+  box-shadow: 0 0 12px var(--neon-glow-xs);
+}
+
 /* ══════════════════════════════════════
    Empty State
    ══════════════════════════════════════ */
@@ -780,25 +813,9 @@ kbd {
   transition: opacity 0.3s;
 }
 
-/* Animated border glow on hover */
-.property-card::after {
-  content: '';
-  position: absolute;
-  inset: -1px;
-  border-radius: inherit;
-  background: conic-gradient(from 0deg, transparent, var(--neon), var(--accent2), transparent);
-  opacity: 0;
-  transition: opacity 0.5s;
-  z-index: -1;
-  filter: blur(6px);
-}
-
 .property-card:hover {
-  border-color: var(--border-neon);
-  box-shadow: 0 8px 48px var(--neon-glow-xs), 0 0 0 1px var(--border-neon);
-}
-.property-card:hover::after {
-  opacity: 0.35;
+  border-color: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.4);
 }
 
 .property-card.tilt-active {
@@ -983,7 +1000,8 @@ kbd {
 .req { color: var(--danger); }
 
 .field input,
-.field textarea {
+.field textarea,
+.field select {
   width: 100%;
   padding: 13px 16px;
   font-family: var(--font-body);
@@ -997,7 +1015,25 @@ kbd {
   resize: vertical;
 }
 .field input::placeholder,
-.field textarea::placeholder { color: var(--text-muted); }
+.field textarea::placeholder,
+.field select::placeholder { color: var(--text-muted); }
+
+.field select {
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url('data:image/svg+xml;utf8,<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%237e88a4" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>');
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+  background-size: 16px;
+  padding-right: 48px;
+}
+.field select:focus {
+  background-image: url('data:image/svg+xml;utf8,<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%2300e5ff" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>');
+}
+.field select option {
+  background-color: var(--bg-card-solid);
+  color: var(--text-primary);
+}
 
 .field input:focus,
 .field textarea:focus {

@@ -153,6 +153,13 @@
           <input type="text" id="search-input" placeholder="Search by name, location, client…" autocomplete="off">
           <div class="search-shortcut"><kbd>Ctrl+K</kbd></div>
         </div>
+        
+        <div class="filter-tabs" id="filter-tabs">
+          <button class="filter-tab active" data-status="All">All Properties</button>
+          <button class="filter-tab" data-status="Owned">Owned / Managed</button>
+          <button class="filter-tab" data-status="Buying">Planning to Buy</button>
+          <button class="filter-tab" data-status="Selling">Planning to Sell</button>
+        </div>
       </div>
 
       <!-- Empty State -->
@@ -201,6 +208,14 @@
             <label for="prop-location">Location <span class="req">*</span></label>
             <input type="text" id="prop-location" name="location" required placeholder="e.g. 12 MG Road, Bengaluru">
           </div>
+          <div class="field">
+            <label for="prop-status">Status</label>
+            <select id="prop-status" name="status">
+              <option value="Owned">Owned / Managed</option>
+              <option value="Buying">Planning to Buy</option>
+              <option value="Selling">Planning to Sell</option>
+            </select>
+          </div>
         </fieldset>
 
         <!-- Client / Tenant Info -->
@@ -218,12 +233,16 @@
           </div>
         </fieldset>
 
-        <!-- Issue -->
+        <!-- Issue and Notes -->
         <fieldset class="form-group glass-card">
-          <legend>Issue Details <span class="optional-tag">Optional</span></legend>
+          <legend>Issue Details & Notes <span class="optional-tag">Optional</span></legend>
           <div class="field">
             <label for="prop-issue">Describe the Issue</label>
-            <textarea id="prop-issue" name="issue" rows="4" placeholder="e.g. Water leakage in 3rd floor bathroom…"></textarea>
+            <textarea id="prop-issue" name="issue" rows="3" placeholder="e.g. Water leakage in 3rd floor bathroom…"></textarea>
+          </div>
+          <div class="field">
+            <label for="prop-notes">Additional Notes</label>
+            <textarea id="prop-notes" name="notes" rows="3" placeholder="e.g. Discuss painting with the association…"></textarea>
           </div>
         </fieldset>
 

@@ -9,6 +9,7 @@ const STORAGE_KEY = 'gk_properties';
 let properties = [];
 let editingId = null;
 let deletingId = null;
+let currentStatusFilter = 'All';
 
 // ── DOM Refs ──
 const viewList       = document.getElementById('view-list');
@@ -35,8 +36,20 @@ document.addEventListener('DOMContentLoaded', () => {
   initMagneticButtons();
   initRippleButtons();
   initCalcInput();
+  initFilterTabs();
   updateGreeting();
 });
+
+function initFilterTabs() {
+  document.querySelectorAll('.filter-tab').forEach(tab => {
+    tab.addEventListener('click', (e) => {
+      document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+      e.target.classList.add('active');
+      currentStatusFilter = e.target.getAttribute('data-status');
+      renderList();
+    });
+  });
+}
 
 // ═══════════════════════════════════════════
 // Persistence (same as before, server + fallback)
@@ -112,13 +125,19 @@ function renderList() {
   const query = searchInput.value.trim().toLowerCase();
 
   const filtered = properties.filter(p => {
+    if (currentStatusFilter !== 'All') {
+      const pStatus = p.status || 'Owned';
+      if (pStatus !== currentStatusFilter) return false;
+    }
+    
     if (!query) return true;
     return (
       p.name.toLowerCase().includes(query) ||
       p.location.toLowerCase().includes(query) ||
       (p.clientName && p.clientName.toLowerCase().includes(query)) ||
       (p.clientPhone && p.clientPhone.toLowerCase().includes(query)) ||
-      (p.issue && p.issue.toLowerCase().includes(query))
+      (p.issue && p.issue.toLowerCase().includes(query)) ||
+      (p.notes && p.notes.toLowerCase().includes(query))
     );
   });
 
@@ -141,12 +160,12 @@ function renderList() {
   }
 
   emptyState.classList.add('hidden');
-
+  // So this part has been patched because the user doesnt seem to like this sort of color activity
   propertyGrid.innerHTML = filtered.map((p, i) => {
     const hasIssue = p.issue && p.issue.trim();
     const createdDate = p.createdAt ? new Date(p.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : '';
     return `
-      <div class="property-card" style="animation-delay:${i * 70}ms" 
+      <div class="property-card" style="animationnnnn-delay:${i * 70}ms" 
            onmouseenter="startTilt(this)" onmouseleave="endTilt(this)" onmousemove="handleTilt(event, this)">
         <div class="card-header">
           <div class="card-name">${escapeHtml(p.name)}</div>
@@ -193,10 +212,26 @@ function renderList() {
         </div>
         ` : ''}
 
-        <div class="issue-badge ${hasIssue ? 'issue-badge--has' : 'issue-badge--clear'}">
-          ${hasIssue
-            ? '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> Issue Reported'
-            : '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> All Clear'}
+        ${p.notes ? `
+        <div class="card-detail">
+          <svg class="card-detail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+          <div>
+            <div class="card-detail-label">Notes</div>
+            <div class="card-detail-value">${escapeHtml(p.notes)}</div>
+          </div>
+        </div>
+        ` : ''}
+
+        <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:14px;">
+          <div class="issue-badge ${hasIssue ? 'issue-badge--has' : 'issue-badge--clear'}" style="margin-top:0;">
+            ${hasIssue
+              ? '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> Issue Reported'
+              : '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> All Clear'}
+          </div>
+          
+          <div class="issue-badge" style="margin-top:0; border: 1px solid var(--border); color: var(--text-secondary); background: transparent;">
+            ${(p.status === 'Buying') ? 'Planning to Buy' : (p.status === 'Selling') ? 'Planning to Sell' : 'Owned / Managed'}
+          </div>
         </div>
 
         ${createdDate ? `<div style="margin-top:10px;font-size:0.62rem;color:var(--text-muted);letter-spacing:1px;text-transform:uppercase;">Added ${createdDate}</div>` : ''}
@@ -217,9 +252,11 @@ function handleSubmit(e) {
   const data = {
     name:        form.name.value.trim(),
     location:    form.location.value.trim(),
+    status:      form.status.value,
     clientName:  form.clientName.value.trim() || null,
     clientPhone: form.clientPhone.value.trim() || null,
     issue:       form.issue.value.trim() || null,
+    notes:       form.notes.value.trim() || null,
   };
 
   if (editingId) {
@@ -256,9 +293,11 @@ function startEdit(id) {
 
   form.name.value        = prop.name;
   form.location.value    = prop.location;
+  form.status.value      = prop.status || 'Owned';
   form.clientName.value  = prop.clientName || '';
   form.clientPhone.value = prop.clientPhone || '';
   form.issue.value       = prop.issue || '';
+  form.notes.value       = prop.notes || '';
 
   showView('add');
   playSound('click');
